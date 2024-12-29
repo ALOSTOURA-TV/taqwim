@@ -1,0 +1,136 @@
+*{font-family: ;
+                font-family: 'Comfortaa', 'Almarai', ' cursive ';
+            }
+            body{direction:rtl}
+            .sidebar-wrap .sidebar {
+                float: right;
+            }
+            .nav {
+                padding-right: 0;
+            }
+            .sidebar-wrap .sidebar .nav .nav-item .nav-link>.arrow {
+                margin-left: 15px;
+            }
+            .sidebar-wrap .sidebar .nav .nav-item .nav-link>.icon {
+                margin-left: 15px;
+            }
+            .text-left{
+                text-align: left;
+            }
+            .text-right{
+                text-align: right;
+            }
+
+            .size-35 {
+                font-size: 50px;
+            }
+            .text-black{
+                color: black;
+            }
+
+            .text-gola{
+                color: #4b0be6;
+            }
+
+            .footer .nav .nav-item .nav-link  {
+                font-weight: 900;
+                color: black;
+            }
+            .btn-light {
+               
+                background: radial-gradient(ellipse at 30% 30%, #e4f3fc63 0%, #d0d9f608 50%, #570add2b 100%);
+            }
+            .sidebar-wrap .sidebar .nav .nav-item .nav-link.active {
+                background-color: rgb(255 255 255 / 5%);
+            }
+
+            .pt-10 {
+                padding-top: 6rem !important;
+            }
+            a{
+                color: #fff;
+            }
+            .card {
+                background-color: #ffffffab;
+            }
+
+            .div10{
+                width:10%;
+            }
+            .div8{
+                width:8%;
+            }
+            .div7{
+                width:7%;
+            }
+            .div15{
+                width:15%;
+            }
+
+            .div12{
+                width:12.5%;
+            }
+            .div30{
+                width:30%;
+            }
+            .div20{
+                width:20%;
+            }
+
+            .div5{
+                width:5%;
+            }
+            .div35{
+                width:35%;
+            }
+            .div25{
+                width:25%;
+            }
+            .div40{
+                width:40%;
+            }
+
+            .m0{
+                margin-right: 0px;
+                margin-left: 0px; 
+            }
+
+            .ml-5{
+                margin-left: 5px; 
+            }
+            .mr-5{
+                margin-right: 5px; 
+            }
+
+            h6, .h6 {
+                font-size: 0.9rem;
+            }
+            .myframe{
+                min-height: 400px;
+                width: 100%;
+            }
+
+            .list-group {
+                padding-right: 0
+            }
+
+            .avatar.avatar-25 {
+                line-height: 25px;
+                height: 25px;
+                width: 25px;
+            }
+            .pb-30 {
+                padding-bottom: 45px
+            }
+
+            .size-40 {
+                font-size: 40px;
+            }
+
+            .size-15 {
+                font-size: 15px;
+            }
+
+            .card .card-body {
+                padding: 3px;
+            }
