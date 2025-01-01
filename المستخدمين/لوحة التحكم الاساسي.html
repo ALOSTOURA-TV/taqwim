@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم الاساسي</title>
+    <link rel="ICON" href="../../app/Logo/Ostora_ico.png">
+    <link rel="stylesheet" href="css/style-otp.css">
+</head>
+<body>
+
+    <div class="container">
+        <a href="javascript:void(0);" class="link" onclick="showControlPanel()">لوحة المستخدمين</a> | 
+        <a href="javascript:void(0);" class="link" onclick="showBlockPanel()">لوحة الحظر</a> |
+        <a href="javascript:void(0);" class="link" onclick="showAll()">إظهار الكل</a>
+    </div>
+
+    <!-- لوحة إضافة مستخدم -->
+    <div id="addUser" class="form-container">
+        <h1>إضافة مستخدم جديد</h1>
+        <input type="text" id="newPhone" placeholder="أدخل رقم الهاتف">
+        <input type="text" id="newOtp" placeholder="أدخل كود التحقق">
+        <button class="form-button" onclick="addUser()">إضافة المستخدم</button>
+    </div>
+
+    <!-- لوحة النتائج -->
+    <center>
+        <div id="searchResultCount" style="text-align: center;">تم العثور على 0 مستخدم</div>
+    </center>
+
+    <!-- حاوية شريط البحث -->
+    <div id="addUser" class="form-container-search">
+        <div class="search-bar-container">
+            <input type="text" id="search" class="search-bar" placeholder="ابحث عن مستخدم" onkeyup="searchUser()">
+        </div>
+        <span id="searchMessage" style="display: none; color: red;">لا توجد نتائج للبحث.</span>
+    </div>
+
+    <!-- لوحة المستخدمين -->
+    <div id="control" class="user-list" style="display: none;">
+        <h1>لوحة المستخدمين</h1>
+        <div id="userList"></div>
+    </div>
+
+    <!-- لوحة الحظر -->
+    <div id="block" class="user-list">
+        <h1>لوحة الحظر</h1>
+        <div id="blockedUserList"></div>
+    </div>
+
+    <!-- نموذج تعديل المستخدم -->
+    <div id="editUserForm" class="form-container" style="display: none;">
+        <h1>تعديل بيانات المستخدم المحظور</h1>
+        <input type="text" id="editPhone" placeholder="أدخل رقم الهاتف">
+        <input type="text" id="editOtp" placeholder="أدخل كود التحقق">
+        <button class="form-button" onclick="saveEditedUser()">حفظ التعديلات</button>
+        <button class="form-button" onclick="cancelEdit()">إلغاء</button>
+    </div>
+
+    <script>
+        let undoDeleteUser = null; // لتخزين المستخدم المحذوف مؤقتًا
+        let undoBlockUser = null;
+        let currentUserIndex = null;
+
+        // وظيفة لعرض لوحة المستخدمين
+        function showControlPanel() {
+            document.getElementById('control').style.display = 'block';
+            document.getElementById('block').style.display = 'none';
+        }
+
+        // وظيفة لعرض لوحة الحظر
+        function showBlockPanel() {
+            document.getElementById('block').style.display = 'block';
+            document.getElementById('control').style.display = 'none';
+        }
+
+        // وظيفة لعرض كلا اللوحتين
+        function showAll() {
+            document.getElementById('control').style.display = 'block';
+            document.getElementById('block').style.display = 'block';
+        }
+
+        // وظيفة لعرض المستخدمين
+        function loadUsers() {
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            const userList = document.getElementById('userList');
+            userList.innerHTML = '';
+
+            if (users.length === 0) {
+                userList.innerHTML = '<p>لا يوجد مستخدمين لتعرضهم.</p>';
+            }
+
+            users.forEach((user, index) => {
+                const userItem = document.createElement('div');
+                userItem.classList.add('user-item');
+                userItem.innerHTML = `
+                    <span>رقم الهاتف: ${user.phone}</span>
+                    <span>كود التحقق: ${user.otp}</span>
+                    <button class="button-delete" onclick="deleteUser(${index})">حذف</button>
+					<button class="button-edit" onclick="editUser(${index})">تعديل</button>
+                    <button class="button-block" onclick="blockUser('${user.phone}')">حظر</button>
+                `;
+                userList.appendChild(userItem);
+            });
+        }
+
+        // وظيفة لإضافة مستخدم
+        function addUser() {
+            const phone = document.getElementById('newPhone').value;
+            const otp = document.getElementById('newOtp').value;
+
+            if (phone && otp) {
+                let users = JSON.parse(localStorage.getItem('users')) || [];
+
+                // التحقق إذا كان الرقم موجودًا بالفعل في القائمة
+                const userExists = users.some(user => user.phone === phone);
+                
+                if (userExists) {
+                    alert('هذا المستخدم موجود بالفعل في القائمة');
+                    return; // عدم إضافة المستخدم إذا كان موجودًا
+                }
+
+                // إذا لم يكن موجودًا، نضيفه في بداية القائمة
+                users.unshift({ phone, otp });
+                localStorage.setItem('users', JSON.stringify(users));
+                loadUsers(); 
+                alert('تم إضافة المستخدم بنجاح');
+                document.getElementById('newPhone').value = '';
+                document.getElementById('newOtp').value = '';
+            } else {
+                alert('يرجى إدخال كلا الحقلين');
+            }
+        }
+
+        // وظيفة لحذف مستخدم (نقل المستخدم إلى قائمة الحظر)
+        function deleteUser(index) {
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            let blockedUsers = JSON.parse(localStorage.getItem('blockedUsers')) || [];
+
+            // حفظ المستخدم المحذوف للتراجع
+            undoDeleteUser = { user: users[index], index: index };
+
+            // إضافة المستخدم إلى قائمة الحظر
+            blockedUsers.unshift(users[index]);
+            localStorage.setItem('blockedUsers', JSON.stringify(blockedUsers));
+
+            // حذف المستخدم من قائمة المستخدمين
+            users.splice(index, 1);
+            localStorage.setItem('users', JSON.stringify(users));
+
+            loadUsers(); 
+            loadBlockedUsers();
+        }
+
+        // وظيفة للتراجع عن حذف مستخدم
+        function undoDelete() {
+            if (undoDeleteUser) {
+                let users = JSON.parse(localStorage.getItem('users')) || [];
+                users.unshift(undoDeleteUser.user); // إضافة المستخدم إلى بداية القائمة
+                localStorage.setItem('users', JSON.stringify(users));
+
+                loadUsers();
+                alert('تم التراجع عن الحذف');
+                undoDeleteUser = null;
+            } else {
+                alert('لا يوجد حذف للتراجع عنه');
+            }
+        }
+
+        // وظيفة لحظر مستخدم
+        function blockUser(phone) {
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            let blockedUsers = JSON.parse(localStorage.getItem('blockedUsers')) || [];
+
+            const userIndex = users.findIndex(user => user.phone === phone);
+            if (userIndex > -1) {
+                // إضافة المستخدم إلى بداية قائمة الحظر
+                blockedUsers.unshift(users[userIndex]);
+                users.splice(userIndex, 1); // حذف المستخدم من قائمة المستخدمين
+
+                localStorage.setItem('users', JSON.stringify(users));
+                localStorage.setItem('blockedUsers', JSON.stringify(blockedUsers));
+
+                loadUsers();
+                loadBlockedUsers();  // تحديث قائمة المحظورين
+            }
+        }
+
+        // وظيفة لإلغاء الحظر
+        function unblockUser(index) {
+            let blockedUsers = JSON.parse(localStorage.getItem('blockedUsers')) || [];
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+
+            const user = blockedUsers.splice(index, 1)[0];
+            users.push(user);
+
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('blockedUsers', JSON.stringify(blockedUsers));
+
+            loadBlockedUsers(); 
+            loadUsers();
+        }
+
+        // وظيفة لتحميل المحظورين
+        function loadBlockedUsers() {
+            let blockedUsers = JSON.parse(localStorage.getItem('blockedUsers')) || [];
+            const blockedUserList = document.getElementById('blockedUserList');
+            blockedUserList.innerHTML = '';
+
+            if (blockedUsers.length === 0) {
+                blockedUserList.innerHTML = '<p>لا يوجد مستخدمين محظورين.</p>';
+            }
+
+            blockedUsers.forEach((user, index) => {
+                const userItem = document.createElement('div');
+                userItem.classList.add('user-item');
+                userItem.innerHTML = `
+                    <span>رقم الهاتف: ${user.phone}</span>
+                    <span>كود التحقق: ${user.otp}</span>
+                    <button class="button-delete" onclick="deleteBlockedUser(${index})">حذف نهائي</button>
+                    <button class="button-block" onclick="unblockUser(${index})">إلغاء الحظر</button>
+                `;
+                blockedUserList.appendChild(userItem);
+            });
+        }
+
+        // وظيفة لحذف مستخدم نهائيًا من قائمة الحظر
+        function deleteBlockedUser(index) {
+            let blockedUsers = JSON.parse(localStorage.getItem('blockedUsers')) || [];
+            blockedUsers.splice(index, 1); // حذف المستخدم نهائيًا من قائمة الحظر
+            localStorage.setItem('blockedUsers', JSON.stringify(blockedUsers));
+
+            loadBlockedUsers(); // إعادة تحميل قائمة المحظورين بعد الحذف
+        }
+		
+		
+		// وظيفة لتعديل المستخدم
+        function editUser(index) {
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            const user = users[index];
+
+            // تحديث العنوان
+            document.querySelector('#editUserForm h1').innerText = 'تعديل بيانات المستخدم';
+
+            // عرض نموذج التعديل
+            document.getElementById('editPhone').value = user.phone;
+            document.getElementById('editOtp').value = user.otp;
+            document.getElementById('editUserForm').style.display = 'block';
+            currentUserIndex = index;
+
+            // التمرير إلى النموذج
+            document.getElementById('editUserForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // وظيفة لحفظ التعديلات
+        function saveEditedUser() {
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            const updatedPhone = document.getElementById('editPhone').value;
+            const updatedOtp = document.getElementById('editOtp').value;
+
+            // تحديث بيانات المستخدم
+            users[currentUserIndex].phone = updatedPhone;
+            users[currentUserIndex].otp = updatedOtp;
+
+            localStorage.setItem('users', JSON.stringify(users));
+
+            loadUsers(); // إعادة تحميل قائمة المستخدمين
+            cancelEdit(); // إخفاء نموذج التعديل بعد الحفظ
+        }
+
+        // وظيفة لإلغاء التعديل
+        function cancelEdit() {
+            document.getElementById('editUserForm').style.display = 'none';
+        }
+		
+
+        
+
+        // وظيفة البحث
+        function searchUser() {
+            const searchQuery = document.getElementById('search').value.toLowerCase();
+            
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            let blockedUsers = JSON.parse(localStorage.getItem('blockedUsers')) || [];
+            
+            const filteredUsers = users.filter(user => user.phone.includes(searchQuery));
+            const filteredBlockedUsers = blockedUsers.filter(user => user.phone.includes(searchQuery));
+            
+            const searchMessage = document.getElementById('searchMessage');
+            const searchResultCount = document.getElementById('searchResultCount');
+            
+            if (filteredUsers.length === 0 && filteredBlockedUsers.length === 0) {
+                searchMessage.style.display = 'inline';
+                searchResultCount.innerText = 'تم العثور على 0 مستخدم';
+            } else {
+                searchMessage.style.display = 'none';
+                searchResultCount.innerText = `تم العثور على ${filteredUsers.length + filteredBlockedUsers.length} مستخدم`;
+            }
+
+            const userList = document.getElementById('userList');
+            userList.innerHTML = '';
+            filteredUsers.forEach((user, index) => {
+                const userItem = document.createElement('div');
+                userItem.classList.add('user-item');
+                userItem.innerHTML = `
+                    <span>رقم الهاتف: ${user.phone}</span>
+                    <span>كود التحقق: ${user.otp}</span>
+                    <button class="button-delete" onclick="deleteUser(${index})">حذف</button>
+					<button class="button-editUser" onclick="editUser(${index})">تعديل</button>
+                    <button class="button-block" onclick="blockUser('${user.phone}')">حظر</button>
+                `;
+                userList.appendChild(userItem);
+            });
+
+            const blockedUserList = document.getElementById('blockedUserList');
+            blockedUserList.innerHTML = '';
+            filteredBlockedUsers.forEach((user, index) => {
+                const userItem = document.createElement('div');
+                userItem.classList.add('user-item');
+                userItem.innerHTML = `
+                    <span>رقم الهاتف: ${user.phone}</span>
+                    <span>كود التحقق: ${user.otp}</span>
+                    <button class="button-delete" onclick="deleteBlockedUser(${index})">حذف نهائي</button>
+                    <button class="button-block" onclick="unblockUser(${index})">إلغاء الحظر</button>
+                `;
+                blockedUserList.appendChild(userItem);
+            });
+        }
+
+        // تحميل البيانات عند تحميل الصفحة
+        window.onload = function () {
+            loadUsers();
+            loadBlockedUsers();
+        };
+    </script>
+
+</body>
+</html>
