@@ -3,105 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>التحقق من الهاتف</title>
+    <title>تسجيل الدخول الاساسي</title>
+    <link rel="ICON" href="Ostora_ico.png">
     <link rel="stylesheet" href="css/style-users.css">
 </head>
 <body>
-    <h1>التحقق من رقم الهاتف</h1>
+    <h1>تسجيل الدخول</h1>
 
-    <!-- إدخال رقم الهاتف -->
     <label for="phone">أدخل رقم هاتفك:</label>
     <input type="text" id="phone" placeholder="رقم الهاتف"><br>
 
-    <!-- إدخال كود التحقق -->
-    <label for="otp">أدخل كود التحقق:</label>
+    <label for="otp">أدخل الرقم السري:</label>
     <input type="text" id="otp" placeholder="كود التحقق"><br>
 
-    <!-- زر الإرسال -->
     <button onclick="sendOTP()">إرسال كود التحقق</button><br><br>
     <button onclick="verifyOTP()">تسجيل الدخول</button>
 
+    <div id="alertMessage" class="alert">
+        <img src="Ostora_ico.png" alt="رسالة">
+        <span></span>
+        <button id="copyOtpBtn" style="display:none;">نسخ الكود</button>
+    </div>
+
     <script>
-        // وظيفة لتوليد كود تحقق عشوائي
+        // دالة لتوليد كود التحقق OTP
         function generateOTP() {
-            return Math.floor(10000 + Math.random() * 90000).toString(); // كود مكون من 5 أرقام
+            return Math.floor(10000 + Math.random() * 90000).toString();
         }
 
-        // وظيفة لإرسال كود التحقق
+        // التحقق من صحة رقم الهاتف
+        function isValidPhone(phone) {
+            const phoneRegex = /^[0-9]{10,15}$/;
+            return phoneRegex.test(phone);
+        }
+
+        // التحقق من كون الرقم محظورًا
+        function isUserBlocked(phone) {
+            let blockedUsers = JSON.parse(localStorage.getItem('blockedUsers')) || [];
+            return blockedUsers.some(user => user.phone === phone);
+        }
+
+        // الحصول على عدد المحاولات الفاشلة
+        function getFailedAttempts(phone) {
+            let attempts = JSON.parse(localStorage.getItem('failedAttempts')) || {};
+            return attempts[phone] || 0;
+        }
+
+        // زيادة عدد المحاولات الفاشلة
+        function incrementFailedAttempts(phone) {
+            let attempts = JSON.parse(localStorage.getItem('failedAttempts')) || {};
+            attempts[phone] = (attempts[phone] || 0) + 1;
+            localStorage.setItem('failedAttempts', JSON.stringify(attempts));
+        }
+
+        // إعادة تعيين المحاولات الفاشلة
+        function resetFailedAttempts(phone) {
+            let attempts = JSON.parse(localStorage.getItem('failedAttempts')) || {};
+            attempts[phone] = 0;
+            localStorage.setItem('failedAttempts', JSON.stringify(attempts));
+        }
+
+        // التحقق إذا كان الرقم مسجل مسبقًا
+        function isPhoneAlreadyRegistered(phone) {
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            return users.some(user => user.phone === phone);
+        }
+
+        // عرض إشعار للمستخدم
+        function showAlert(message, type = "error", otpCode = null) {
+            const alert = document.getElementById('alertMessage');
+            alert.querySelector('span').textContent = message;
+            const copyBtn = document.getElementById('copyOtpBtn');
+            
+            if (otpCode) {
+                copyBtn.style.display = 'inline-block'; // إظهار زر النسخ
+                copyBtn.onclick = () => {
+                    navigator.clipboard.writeText(otpCode).then(() => {
+                        showAlert('تم نسخ الكود إلى الحافظة', 'success');
+                    });
+                };
+            } else {
+                copyBtn.style.display = 'none'; // إخفاء الزر إذا لم يكن هناك كود
+            }
+
+            alert.className = `alert ${type}`;
+            alert.classList.add('show');
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 3000);
+        }
+
+        // إرسال كود OTP إلى المستخدم
         function sendOTP() {
             const phone = document.getElementById('phone').value;
 
             if (!phone) {
-                alert('يرجى إدخال رقم الهاتف');
+                showAlert('يرجى إدخال رقم الهاتف');
                 return;
             }
 
-            // التحقق من وجود المستخدم في قائمة الحظر
-            let blockedUsers = JSON.parse(localStorage.getItem('blockedUsers')) || [];
-            if (blockedUsers.includes(phone)) {
-                alert('هذا المستخدم محظور من استخدام الخدمة.');
+            if (!isValidPhone(phone)) {
+                showAlert('يرجى إدخال رقم هاتف صحيح.');
                 return;
             }
 
+            // التحقق إذا كان الرقم محظورًا
+            if (isUserBlocked(phone)) {
+                showAlert('هذا الرقم محظور من الاستخدام.', 'error');
+                return;
+            }
+
+            // التحقق إذا كان الرقم موجودًا مسبقًا
+            if (isPhoneAlreadyRegistered(phone)) {
+                showAlert('هذا الرقم تم تسجيله مسبقًا.', 'error');
+                return;
+            }
+
+            // إذا لم يكن الرقم محظورًا ولم يكن مسجلًا، يتم توليد كود التحقق وإرساله
             const otpCode = generateOTP();
             const user = { phone, otp: otpCode };
 
             let users = JSON.parse(localStorage.getItem('users')) || [];
-            users.push(user);
-            localStorage.setItem('users', JSON.stringify(users)); // حفظ المستخدمين في localStorage
+            // إضافة المستخدم في بداية القائمة باستخدام spread operator
+            users = [user, ...users];  // هذا يضيف المستخدم في أول القائمة
+            localStorage.setItem('users', JSON.stringify(users));
 
-            alert(`تم إرسال كود التحقق إلى رقم الهاتف: ${phone}\nكود التحقق هو: ${otpCode}`);
+            showAlert(`تم إرسال كود التحقق إلى رقم الهاتف: ${phone}.`, 'success', otpCode);
         }
 
-        // وظيفة للتحقق من الكود المدخل
+        // التحقق من كود OTP المدخل
         function verifyOTP() {
             const userOTP = document.getElementById('otp').value;
+            const phone = document.getElementById('phone').value;
 
             if (!userOTP) {
-                alert('يرجى إدخال كود التحقق');
+                showAlert('يرجى إدخال كود التحقق');
+                return;
+            }
+
+            // التحقق إذا كان الرقم محظورًا
+            if (isUserBlocked(phone)) {
+                showAlert('تم حظر هذا الرقم من الاستخدام', 'error');
                 return;
             }
 
             let users = JSON.parse(localStorage.getItem('users')) || [];
-            const user = users.find(u => u.otp === userOTP);
+            const userIndex = users.findIndex(u => u.otp === userOTP && u.phone === phone);
 
-            if (user) {
-                alert('تم التحقق بنجاح!');
-                // توجيه المستخدم إلى الصفحة الرئيسية
-                window.location.href = 'go:Ostora';  // إعادة التوجيه بعد التحقق بنجاح
+            if (userIndex !== -1) {
+                // إذا تم التحقق بنجاح
+                showAlert('تم التحقق بنجاح!', 'success');
+                resetFailedAttempts(phone); // إعادة تعيين المحاولات الفاشلة
+                users.splice(userIndex, 1);
+                localStorage.setItem('users', JSON.stringify(users));
+                setTimeout(() => {
+                    window.location.href = 'go:Ostora';  // إعادة التوجيه بعد التحقق بنجاح
+                }, 2000);
             } else {
-                alert('كود التحقق غير صحيح. يرجى المحاولة مرة أخرى.');
+                // زيادة المحاولات الفاشلة
+                incrementFailedAttempts(phone);
+
+                // التحقق من عدد المحاولات
+                const failedAttempts = getFailedAttempts(phone);
+
+                if (failedAttempts >= 5) {
+                    blockUser(phone); // حظر المستخدم
+                    showAlert('لقد تجاوزت عدد المحاولات المسموحة. تم حظرك.', 'error');
+                } else {
+                    showAlert('كود التحقق غير صحيح. يرجى المحاولة مرة أخرى.');
+                }
             }
         }
 
-        // تتبع حركة المؤشر
-        document.addEventListener('mousemove', (e) => {
-            const x = e.clientX;
-            const y = e.clientY;
+        // حظر المستخدم عند تجاوز المحاولات الفاشلة
+        function blockUser(phone) {
+            // تخزين السبب بشكل صحيح عند الحظر
+            const blockedUsers = JSON.parse(localStorage.getItem('blockedUsers')) || [];
+            
+            // تحديد سبب الحظر
+            const reason = "تجاوز عدد المحاولات المسموحة";
 
-            // إنشاء عنصر جديد
-            const particle = document.createElement('div');
-            particle.classList.add('particle');
+            // إضافة الرقم المحظور في بداية القائمة باستخدام unshift()
+            blockedUsers.unshift({ phone, reason });  // استخدام unshift لإضافة العنصر في أول القائمة
+            localStorage.setItem('blockedUsers', JSON.stringify(blockedUsers));
 
-            // تحديد حجم النقطة وموقعها
-            const size = Math.random() * 10 + 5;
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            particle.style.left = `${x}px`;
-            particle.style.top = `${y}px`;
-
-            // اختيار لون عشوائي
-            const colors = ['#f39c12', '#e74c3c', '#8e44ad', '#3498db', '#2ecc71'];
-            particle.style.background = colors[Math.floor(Math.random() * colors.length)];
-
-            // إضافة النقطة إلى الصفحة
-            document.body.appendChild(particle);
-
-            // إزالة النقطة بعد انتهاء الحركة
-            setTimeout(() => {
-                particle.remove();
-            }, 1500);
-        });
+            // عرض الإشعار للمستخدم
+            showAlert(`تم حظرك بسبب: ${reason}`, 'error');
+        }
     </script>
 </body>
 </html>
