@@ -12303,7 +12303,7 @@ body {
 }
 
 .sidebar-wrap .sidebar .nav .nav-item.dropdown .dropdown-toggle {
-  color: var(--fimobile-theme-text);
+  color: #fff;
 }
 
 .sidebar-wrap .sidebar .nav .nav-item.dropdown .dropdown-toggle::after {
