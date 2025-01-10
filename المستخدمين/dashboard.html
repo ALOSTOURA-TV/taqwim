@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h2>لوحة التحكم</h2>
+        <button id="logoutBtn">تسجيل الخروج</button>
+    </header>
+
+    <div class="card-container">
+        <div class="card">
+            <h3>عدد المستخدمين</h3>
+            <p id="userCount">0</p>
+        </div>
+        <div class="card">
+            <h3>آخر نشاط</h3>
+            <p id="lastActivity">لا يوجد نشاط بعد</p>
+        </div>
+    </div>
+
+    <!-- نموذج إضافة مستخدم جديد -->
+    <div class="add-user-form">
+        <h3>إضافة مستخدم جديد</h3>
+        <form id="addUserForm">
+            <input type="text" id="newUsername" placeholder="إسم المستخدم" required>
+            <input type="text" id="newJobCode" placeholder="الكود الوظيفي" required>
+            <input type="email" id="newEmail" placeholder="البريد الإلكتروني" required>
+            <input type="tel" id="newPhone" placeholder="رقم الهاتف" required>
+            <input type="file" id="newProfileImage" accept="image/*" required> <!-- حقل تحميل الصورة -->
+            <button type="submit">إضافة مستخدم</button>
+        </form>
+    </div>
+
+    <!-- جدول عرض المستخدمين -->
+    <table>
+        <thead>
+            <tr>
+                <th>الصورة الشخصية</th>
+                <th>الإسم</th>
+                <th>الكود الوظيفي</th>
+                <th>البريد الإلكتروني</th>
+                <th>رقم الهاتف</th>
+                <th>الإجراءات</th>
+            </tr>
+        </thead>
+        <tbody id="userTableBody">
+            <!-- بيانات المستخدمين ستظهر هنا -->
+        </tbody>
+    </table>
+</div>
+
+<div id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>

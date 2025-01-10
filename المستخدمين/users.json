@@ -1,0 +1,5 @@
+[
+  { "username": "أحمد علي", "jobCode": "12345", "email": "ahmad@example.com", "phone": "01012345678", "password": "password1" },
+  { "username": "مريم فوزي", "jobCode": "23456", "email": "mariam@example.com", "phone": "01123456789", "password": "password2" },
+  { "username": "علي محمد", "jobCode": "34567", "email": "ali@example.com", "phone": "01234567890", "password": "password3" }
+]

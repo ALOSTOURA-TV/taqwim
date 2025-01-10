@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تسجيل الحساب</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>إنشاء حساب جديد</h2>
+    <form id="signupForm" enctype="multipart/form-data">
+      <input type="text" id="username" placeholder="إسم المستخدم" required>
+      <input type="text" id="jobCode" placeholder="الكود الوظيفي" required>
+      <input type="tel" id="phone" placeholder="رقم الهاتف" required>
+      <input type="email" id="email" placeholder="البريد الإلكتروني" required>
+      <input type="password" id="password" placeholder="الرقم السري" required>
+      <input type="file" id="profileImage" accept="image/*" required>
+      <button type="submit">تسجيل</button>
+    </form>
+    
+    <p>أو يمكنك التسجيل عبر:</p>
+    <button id="facebookLogin">تسجيل عبر فيسبوك</button>
+    
+    <button id="googleLogin">تسجيل عبر جيميل</button>
+
+    <p>هل لديك حساب بالفعل؟ <a href="login.html">تسجيل الدخول</a></p>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

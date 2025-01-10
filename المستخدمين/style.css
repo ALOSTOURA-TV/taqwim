@@ -1,0 +1,224 @@
+/* تنسيق الجسم */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  direction: rtl;
+}
+
+/* تنسيق الحاوية الرئيسية */
+.container {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 350px;
+  text-align: center;
+}
+
+/* تنسيق الحقول المدخلة (input) */
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* تنسيق الأزرار (button) */
+button {
+  width: 100%;
+  padding: 10px;
+  background: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 5px 0;
+}
+
+/* تأثير عند التمرير فوق الأزرار */
+button:hover {
+  background: #0056b3;
+}
+
+/* تنسيق الروابط */
+a {
+  color: #007BFF;
+  text-decoration: none;
+}
+
+/* تأثير عند التمرير فوق الرابط */
+a:hover {
+  text-decoration: underline;
+}
+
+/* تخصيص زر فيسبوك */
+button#facebookLogin {
+  background-color: #3b5998;
+}
+
+/* تأثير عند التمرير فوق زر فيسبوك */
+button#facebookLogin:hover {
+  background-color: #2d4373;
+}
+
+/* تخصيص زر جوجل */
+button#googleLogin {
+  background-color: #db4437;
+}
+
+/* تأثير عند التمرير فوق زر جوجل */
+button#googleLogin:hover {
+  background-color: #c1351d;
+}
+
+/* تحسين استجابة الصفحة للأجهزة الصغيرة */
+@media (max-width: 600px) {
+  .container {
+    width: 90%;
+  }
+}
+
+/* تنسيق صفحة لوحة التحكم */
+.container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* تنسيق الجدول في لوحة التحكم */
+table {
+  width: 80%;
+  margin: 20px auto;
+  border-collapse: collapse;
+  direction: rtl;
+}
+
+/* تنسيق رؤوس الأعمدة في الجدول */
+th, td {
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+/* تنسيق الأزرار في لوحة التحكم */
+button {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+/* تأثير عند التمرير فوق الزر في لوحة التحكم */
+button:hover {
+  background-color: #45a049;
+}
+
+/* تنسيق صفحة استعادة كلمة المرور */
+h2 {
+  margin-bottom: 20px;
+}
+
+form input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+form button {
+  padding: 10px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+form button:hover {
+  background-color: #0056b3;
+}
+
+/* تنسيق صفحة التسجيل */
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+form label {
+  margin-bottom: 5px;
+  text-align: right;
+}
+
+form input {
+  margin-bottom: 15px;
+}
+
+form button {
+  margin-top: 10px;
+}
+
+/* تنسيق الروابط في صفحة التسجيل وتسجيل الدخول */
+p a {
+  color: #007BFF;
+}
+
+p a:hover {
+  text-decoration: underline;
+}
+
+/* تحسين استجابة الصفحة للأجهزة الصغيرة */
+@media (max-width: 600px) {
+    .container {
+        width: 90%; /* جعل الحاوية تأخذ 90% من عرض الشاشة في الشاشات الصغيرة */
+    }
+
+    .login-container,
+    .signup-container,
+    .forgot-password-container {
+        width: 100%; /* جعل الحاويات في صفحات تسجيل الدخول والتسجيل وتأمين كلمة المرور تأخذ كامل عرض الشاشة */
+    }
+}
+
+/* تنسيق Toast (الإشعارات) */
+#toast {
+    visibility: hidden;
+    min-width: 250px;
+    margin-left: -125px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    bottom: 30px;
+    font-size: 17px;
+}
+
+/* عندما يظهر الـ Toast */
+#toast.show {
+    visibility: visible;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+/* تعريف تأثير fadein */
+@keyframes fadein {
+    from { bottom: 0; opacity: 0; }
+    to { bottom: 30px; opacity: 1; }
+}
+
+/* تعريف تأثير fadeout */
+@keyframes fadeout {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+.user-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}

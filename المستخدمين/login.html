@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تسجيل الدخول</title>
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- إضافة جافا سكربت لجوجل -->
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+  
+  <!-- إضافة جافا سكربت لفيسبوك -->
+  <script async defer src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v15.0"></script>
+</head>
+<body>
+  <div class="container">
+    <h2>تسجيل الدخول</h2>
+    <form id="loginForm">
+      <input type="text" id="loginUsername" placeholder="إسم المستخدم" required>
+      <input type="text" id="loginJobCode" placeholder="الكود الوظيفي" required>
+      <input type="password" id="loginPassword" placeholder="كلمة المرور" required>
+      <button type="submit">دخول</button>
+    </form>
+    
+    <p>نسيت كلمة المرور؟ <a href="forgot-password.html">استعادة كلمة المرور</a></p>
+    <p>لا تمتلك حساب؟ <a href="index.html">إنشاء حساب جديد</a></p>
+    
+    <!-- تعديل النص داخل الزر -->
+<div class="fb-login-button" 
+     data-scope="public_profile,email" 
+     data-onlogin="onFacebookSignIn"
+     data-text="تسجيل الدخول باستخدام فيسبوك">
+</div>
+
+  <script src="script.js"></script>
+</body>
+</html>
