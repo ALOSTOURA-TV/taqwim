@@ -1,5 +1,18 @@
 [
-  { "username": "أحمد علي", "jobCode": "12345", "email": "ahmad@example.com", "phone": "01012345678", "password": "password1" },
-  { "username": "مريم فوزي", "jobCode": "23456", "email": "mariam@example.com", "phone": "01123456789", "password": "password2" },
-  { "username": "علي محمد", "jobCode": "34567", "email": "ali@example.com", "phone": "01234567890", "password": "password3" }
+  {
+    "username": "Ali",
+    "jobCode": "12345",
+    "phone": "0123456789",
+    "email": "ali@gmail.com",
+    "password": "444aaa",
+    "profileImage": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA..."
+  },
+  {
+    "username": "Sara",
+    "jobCode": "54321",
+    "phone": "0987654321",
+    "email": "sara@gamil.com",
+    "password": "555sss",
+    "profileImage": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD..."
+  }
 ]
