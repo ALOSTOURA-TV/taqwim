@@ -1,6 +1,6 @@
-const CACHE_NAME = "offline-cache-v2";
-const FILES_TO_CACHE = [
-    'index.html',
+const CACHE_NAME = 'offline-cache-v1'; // اسم ذاكرة التخزين المؤقت
+const assetsToCache = [
+    '/', // الصفحة الرئيسية
     'https://raw.githack.com/ALOSTOURA-TV/taqwim/refs/heads/main/css/font-awesome.min.css',
     'https://raw.githack.com/ALOSTOURA-TV/taqwim/refs/heads/main/css/style.css',
     'https://raw.githack.com/ALOSTOURA-TV/taqwim/refs/heads/main/css/bootstrap-icons.css',
@@ -12,38 +12,42 @@ const FILES_TO_CACHE = [
     'https://raw.githack.com/ALOSTOURA-TV/taqwim/refs/heads/main/js/app.js'
 ];
 
-// عند تثبيت Service Worker
-self.addEventListener("install", (event) => {
+// ✅ تثبيت Service Worker وتخزين الملفات في الكاش
+self.addEventListener('install', event => {
     event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => {
-            return cache.addAll(FILES_TO_CACHE);  // إضافة الملفات إلى الكاش
-        })
+        caches.open(CACHE_NAME)
+            .then(cache => {
+                console.log('📂 يتم تخزين الملفات في الكاش...');
+                return cache.addAll(assetsToCache);
+            })
+            .then(() => self.skipWaiting())
+            .catch(error => console.error('❌ فشل تخزين الملفات:', error))
     );
 });
 
-// عند استلام طلبات من المتصفح
-self.addEventListener("fetch", (event) => {
-    event.respondWith(
-        fetch(event.request).catch(() => {
-            // إذا لم يكن هناك اتصال بالإنترنت، يتم إرجاع الملفات من الكاش
-            return caches.match(event.request);
-        })
-    );
-});
-
-// تنظيف الكاش عند تحديث الـ Service Worker
-self.addEventListener('activate', (event) => {
-    const cacheWhitelist = [CACHE_NAME]; // قائمة الكاش المسموح به
-
+// ✅ تفعيل Service Worker وتنظيف الكاش القديم
+self.addEventListener('activate', event => {
     event.waitUntil(
-        caches.keys().then((cacheNames) => {
+        caches.keys().then(cacheNames => {
             return Promise.all(
-                cacheNames.map((cacheName) => {
-                    if (!cacheWhitelist.includes(cacheName)) {
-                        return caches.delete(cacheName);  // حذف الكاش القديم
+                cacheNames.map(cache => {
+                    if (cache !== CACHE_NAME) {
+                        console.log('🗑️ حذف الكاش القديم:', cache);
+                        return caches.delete(cache);
                     }
                 })
             );
+        })
+    );
+});
+
+// ✅ استرجاع الملفات من الكاش عند عدم وجود إنترنت
+self.addEventListener('fetch', event => {
+    event.respondWith(
+        caches.match(event.request).then(response => {
+            return response || fetch(event.request);
+        }).catch(() => {
+            console.warn('⚠️ لم يتم العثور على الملف في الكاش:', event.request.url);
         })
     );
 });
