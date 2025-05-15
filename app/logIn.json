@@ -1,22 +1,26 @@
 [
   {
+     "id": "1",
     "username": "الأسطورة",
     "email": "**********",
     "password": "0000",
-    "Kod": "40404040",
+    "Kod": "40806",
     "phone": "**********",
-    "createdAt": "2025-05-25T05:25:25.681Z",
-    "id": "1",
-    "profileImage": ""
+    "profileImage": null,
+    "banned": false,
+    "registrationDate": "الجمعة، ١٦ مايو ٢٠٢٥ في ١:٢٠:١١ ص",
+    "utc": "2025-05-15T23:20:11.019Z"
   },
   {
+    "id": "2",
     "username": "محمد احمد محمود حمدي",
     "email": "mohamed12@gmail.com",
     "password": "123456",
     "Kod": "123456",
     "phone": "01099999910",
-    "createdAt": "2025-05-25T05:25:25.681Z",
-    "id": "2",
-    "profileImage": ""
+    "profileImage": null,
+    "banned": false,
+    "registrationDate": "الجمعة، ١٦ مايو ٢٠٢٥ في ٢:٢٠:١١ ص",
+    "utc": "2025-05-15T23:20:12.019Z"
   }
 ]
