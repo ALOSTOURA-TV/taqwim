@@ -1,6 +1,6 @@
 [
   {
-     "id": "1",
+    "id": "1",
     "username": "الأسطورة",
     "email": "**********",
     "password": "0000",
@@ -22,5 +22,17 @@
     "banned": false,
     "registrationDate": "الجمعة، ١٦ مايو ٢٠٢٥ في ٢:٢٠:١١ ص",
     "utc": "2025-05-15T23:20:12.019Z"
+  },
+  {
+    "username": "user-test",
+    "email": "test@example.com",
+    "password": "abc12345",
+    "Kod": "UX-404",
+    "phone": "0512345678",
+    "profileImage": null,
+    "banned": false,
+    "registrationDate": "الأربعاء، ٢٨ مايو ٢٠٢٥ في ١١:٠٠ ص",
+    "utc": "2025-05-28T08:00:00.000Z",
+    "id": "3"
   }
 ]
