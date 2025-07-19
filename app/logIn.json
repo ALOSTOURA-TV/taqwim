@@ -10,17 +10,5 @@
     "banned": false,
     "registrationDate": "الجمعة، ١٦ مايو ٢٠٢٥ في ١:٢٠:١١ ص",
     "utc": "2025-05-15T23:20:11.019Z"
-  },
-  {
-    "username": "الأسطورة",
-    "email": "test@example.com",
-    "password": "0000",
-    "Kod": "40805",
-    "phone": "0501234567",
-    "profileImage": null,
-    "banned": false,
-    "registrationDate": "الجمعة، ١٩ يوليو ٢٠٢٥ في ١١:٠٠:٠٠ ص",
-    "utc": "2025-07-19T08:00:00.000Z",
-    "id": "2"
   }
 ]
